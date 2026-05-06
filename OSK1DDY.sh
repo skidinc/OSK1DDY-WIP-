@@ -8,17 +8,17 @@ trap '' SIGINT SIGTSTP SIGTERM
 clear
 
 
-echo -e "            OSK1DDY            "
-echo "--------------------------------"
-echo "  Skidxl Injection Persistence  "
+printf "            OSK1DDY            \n"
+printf "--------------------------------\n"
+printf "  Skidxl Injection Persistence  \n"
 
 WP_ON_MSG="Write-Protection is enabled, to disable please refer to  ScribbleProtection."
 WP_OFF_MSG="Write-protection is disabled."
 
 detect_chip() {
-    if gsctool -a -f 2>/dev/null | grep -q "ti50"; then
+    if gsctool -a -v 2>/dev/null | grep -qE 'dauntless|RW.*0\.2\.'; then
         echo "ti50"
-    elif gsctool -a -f 2>/dev/null | grep -q "cr50"; then
+    elif gsctool -a -v 2>/dev/null | grep -qE 'RW.*0\.[346]\.'; then
         echo "cr50"
     elif [ -c "/dev/tpm0" ] && tpm_version 2>/dev/null | grep -q "ti50"; then
         echo "ti50"
@@ -59,10 +59,11 @@ else
         exit 0
     elif [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
     
+if [ "$CHIP" = "ti50" ]; then
     gsctool -a -I AllowUnverifiedRo:always >/dev/null 2>&1 || true
+fi
 
-
-echo -e "BOOTING OSK1DDY PAYLOAD..."
+printf "BOOTING OSK1DDY PAYLOAD...\n"
 sleep 2
 
 (
@@ -84,9 +85,9 @@ sleep 2
 while true; do
     clear
 
-    echo " [!] STATUS: stop skidding"                   "
+    echo " [!] STATUS: stop skidding"
     
-    sudo powerd_dbus_suspend >/dev/null 2>&1
+    powerd_dbus_suspend >/dev/null 2>&1
     sleep 2
 done
 
